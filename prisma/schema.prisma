@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id  Int @id @default(autoincrement())
+  name  String @db.VarChar(150)
+  lastname  String @db.VarChar(150)
+  email  String @db.VarChar(150) @unique
+  document_number  String @db.VarChar(150)
+  password  String @db.VarChar(150)
+  created_at  DateTime @default(now())  @db.Timestamp(6)
+}
+
+model Student {
+  id  Int @id @default(autoincrement())
+  name  String @db.VarChar(150)
+  lastname  String @db.VarChar(150)
+  email  String @db.VarChar(150) @unique
+  document_number  String @db.VarChar(150)
+  password  String @db.VarChar(150)
+  created_at  DateTime @default(now())  @db.Timestamp(6)
+  Payment Payment?
+  Subject StudentHasSubject[]
+}
+
+model Teacher {
+  id  Int @id @default(autoincrement())
+  name  String @db.VarChar(150)
+  lastname  String @db.VarChar(150)
+  email  String @db.VarChar(150) @unique
+  document_number  String @db.VarChar(150)
+  password  String @db.VarChar(150)
+  created_at  DateTime @default(now())  @db.Timestamp(6)
+  Subject Subject[]
+}
+
+model Subject {
+  id  Int @id @default(autoincrement())
+  topic  String @db.VarChar(150) @unique
+  description  String @db.VarChar(255)
+  cost  Float
+  teacher_id  Int 
+  Teacher Teacher @relation(fields: [teacher_id], references: [id])
+  Payment Payment?
+  Subject StudentHasSubject[]
+}
+
+model Payment {
+  id  Int @id @default(autoincrement())
+  student_id  Int @unique
+  Student Student @relation(fields: [student_id], references: [id])
+  subject_id Int @unique
+  Subject Subject @relation(fields: [subject_id], references: [id])
+  price  Float
+  created_at  DateTime @default(now())  @db.Timestamp(6)
+}
+
+model StudentHasSubject {
+  student_id Int
+  student Student @relation(fields: [student_id],references: [id])
+  subject_id Int
+  subject Subject @relation(fields: [subject_id],references: [id])
+
+  @@id([student_id,subject_id])
+
+}
+
