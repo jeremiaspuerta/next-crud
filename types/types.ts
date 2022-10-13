@@ -17,7 +17,26 @@ export type TypePerson = {
 };
 
 export type TypeTeacher = TypePerson & {
+  
   Subject: Array<TypeSubject>;
 };
 
-export type TypeStudent = TypePerson;
+export type TypeStudent = TypePerson & {
+  Subject: Array<TypeSubject>;
+};
+
+export type TypeAdmin = TypePerson;
+
+
+type TypeItemProfile = {
+  id: number;
+  label: string;
+};
+
+export type TypeCardProfile = {
+  imageSeed: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  items?: Array<TypeItemProfile> | [];
+};

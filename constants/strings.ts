@@ -19,6 +19,8 @@ export const INPUT_COST_FORM_SUBJECT = "cost";
 export const INPUT_TEACHER_FORM_SUBJECT = "teacher";
 
 //Form Generic
+export const BUTTON_OPEN_FORM = (entity: string) => `New ${entity}`;
+export const TITLE_MODAL_FORM =(entity: string) => `Create ${entity}`;
 export const INPUT_NAME_FORM_PERSON = 'name';
 export const INPUT_LASTNAME_FORM_PERSON = 'lastname';
 export const INPUT_DOCUMENT_NUMBER_FORM_PERSON = 'document number';

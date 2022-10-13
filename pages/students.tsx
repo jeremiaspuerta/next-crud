@@ -2,7 +2,7 @@ import { Stack, useToast } from "@chakra-ui/react";
 import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "constants/messages";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { TypeSubject, TypeTeacher } from "types/types";
+import { TypeStudent, TypeSubject, TypeTeacher } from "types/types";
 import dayjs from "dayjs";
 import { ModalEditDeleteActions } from "components/ModalEditDeleteActions";
 import MainPage from "components/MainPage";
@@ -35,42 +35,41 @@ const columns = [
   },
 ];
 
-const Teachers = () => {
+const Students = () => {
   const toast = useToast();
-  const [teacherData, setTeacherData] = useState<Array<TypeTeacher>>([]);
+  const [studentData, setStudentData] = useState<Array<TypeStudent>>([]);
   const [reloadTable, setReloadTable] = useState<Date>(new Date());
 
-  
   useEffect(() => {
     axios
-      .get("/api/teachers?include=Subject")
+      .get("/api/students?include=Subject")
       .then(({ data }) => {
-        setTeacherData(
-          data.map((teacher: TypeTeacher) => ({
-            ...teacher,
+        setStudentData(
+          data.map((student: TypeStudent) => ({
+            ...student,
             actions: (
               <Stack direction="row" spacing={2} align="center">
                 <ModalShowDetails 
-                    imageSeed={teacher.email}
-                    title={teacher.name}
-                    subtitle={teacher.email}
-                    items={teacher.Subject.length > 0 ? teacher.Subject.map((subject: TypeSubject) => ({id: subject.id,label: subject.topic})) : []}
+                    imageSeed={student.email}
+                    title={student.name}
+                    subtitle={student.email}
+                    items={student.Subject.length > 0 ? student.Subject.map((subject: TypeSubject) =>({id: subject.id, label: subject.topic})) : []}
                 />
 
                 <ModalEditDeleteActions
-                  entityData={teacher}
+                  entityData={student}
                   onCallback={() => setReloadTable(new Date())}
                   action="edit"
-                  typeEntity="teacher"
-                  recordTitle={`${teacher.lastname}, ${teacher.name}`}
+                  typeEntity="student"
+                  recordTitle={`${student.lastname}, ${student.name}`}
                 />
 
                 <ModalEditDeleteActions
-                  entityData={teacher}
+                  entityData={student}
                   onCallback={() => setReloadTable(new Date())}
                   action="delete"
-                  typeEntity="teacher"
-                  recordTitle={`${teacher.lastname}, ${teacher.name}`}
+                  typeEntity="student"
+                  recordTitle={`${student.lastname}, ${student.name}`}
                 />
               </Stack>
             ),
@@ -92,10 +91,10 @@ const Teachers = () => {
   return (
     <MainPage
       columnsName={columns}
-      entityData={teacherData}
+      entityData={studentData}
       handleCallback={() => setReloadTable(new Date())}
     />
   );
 };
 
-export default Teachers;
+export default Students;

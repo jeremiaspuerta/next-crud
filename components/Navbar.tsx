@@ -20,7 +20,7 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const Links = ["Subjects", "Teachers", "Students"];
+const Links = ["Subjects", "Teachers", "Students", "Admins"];
 
 const NavLink = ({ children }: { children: String }) => {
   const router = useRouter();

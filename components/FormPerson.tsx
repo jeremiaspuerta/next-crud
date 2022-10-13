@@ -5,14 +5,14 @@ import { BUTTON_ADD, BUTTON_CANCEL, BUTTON_UPDATE, INPUT_DOCUMENT_NUMBER_FORM_PE
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { TypeStudent, TypeTeacher } from "types/types";
+import { TypeAdmin, TypeStudent, TypeTeacher } from "types/types";
 
 type TypeFormPerson = {
-    defaultData?: TypeTeacher | TypeStudent;
+    defaultData?: any;
     onClose: () => void;
     onCallback?: () => void;
-    edit: boolean;
-    typePerson: 'teacher' | 'student' | 'admin';
+    edit?: boolean;
+    typePerson: string;
 }
 
 type TypeInputsForm = {
@@ -168,7 +168,7 @@ export default function FormPerson({
                 required: REQUIRED_FIELD_ERROR,
                 pattern: {
                   value: regex,
-                  message: EMAIL_FIELD_ERROR_PERSON,
+                  message: EMAIL_FIELD_ERROR_PERSON(typePerson),
                 },
               })}
               autoComplete={"off"}
@@ -219,7 +219,7 @@ export default function FormPerson({
               </Button>
             )}
             <Button
-              colorScheme="blue"
+              colorScheme="green"
               mr={3}
               type={"submit"}
               isLoading={submit}

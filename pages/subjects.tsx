@@ -1,41 +1,34 @@
 import {
-  Alert,
-  AlertIcon,
-  Box,
   Button,
-  Container,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Select,
-  Text,
+  Stack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import DataTable from "react-data-table-component";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { HiPlusSm } from "react-icons/hi";
-import { TypeTeacher } from "types/types";
-import { useRouter } from "next/router";
+import { TypeSubject, TypeTeacher } from "types/types";
 import {
   BUTTON_OPEN_FORM_SUBJECT,
-  INPUT_COST_FORM_SUBJECT,
-  INPUT_DESCRIPTION_FORM_SUBJECT,
-  INPUT_TEACHER_FORM_SUBJECT,
-  INPUT_TOPIC_FORM_SUBJECT,
   TITLE_MODAL_FORM_SUBJECT,
 } from "constants/strings";
-import { INPUT_TEACHER_DATA_EMPTY } from "constants/messages";
+import FormSubject from "components/FormSubject";
+import MainPage from "components/MainPage";
+import { useEffect, useState } from "react";
+import { ModalEditDeleteActions } from "components/ModalEditDeleteActions";
+import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "constants/messages";
 
 const columns = [
+  {
+    name: "Actions",
+    selector: (row: any) => row.actions,
+  },
   {
     name: "Topic",
     selector: (row: any) => row.topic,
@@ -45,65 +38,14 @@ const columns = [
     selector: (row: any) => row.description,
   },
   {
+    name: "Teacher",
+    selector: (row: any) => `${row.Teacher.lastname.toUpperCase()}, ${row.Teacher.name.toUpperCase()}`,
+  },
+  {
     name: "Cost",
     selector: (row: any) => row.cost,
   },
 ];
-
-type TypeFormSubject = {
-  onClose: () => void;
-  teachers_data: Array<TypeTeacher>;
-};
-
-function FormSubject({ onClose, teachers_data }: TypeFormSubject) {
-  return (
-    <Flex gap={7} flexDir={"column"}>
-      <FormControl>
-        <FormLabel>{INPUT_TOPIC_FORM_SUBJECT}</FormLabel>
-        <Input type="text" name="topic" />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>{INPUT_DESCRIPTION_FORM_SUBJECT}</FormLabel>
-        <Input type="text" name="description" />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>{INPUT_COST_FORM_SUBJECT}</FormLabel>
-        <Input type="number" name="cost" />
-      </FormControl>
-
-      {teachers_data.length > 0 ? (
-        <FormControl>
-          <FormLabel>{INPUT_TEACHER_FORM_SUBJECT}</FormLabel>
-          <Select placeholder="Select option" name="id">
-            {teachers_data.map((teacher: TypeTeacher) => (
-              <option value={`${teacher.id}`}>
-                {teacher.lastname.toUpperCase()}, {teacher.name.toUpperCase()}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-      ) : (
-        <Alert status="info">
-          <AlertIcon />
-          <Text>
-            {INPUT_TEACHER_DATA_EMPTY}
-          </Text>
-        </Alert>
-      )}
-
-      <Flex gap={2} flexDir={"row"} justifyContent={"flex-end"}>
-        <Button variant="ghost" onClick={() => onClose()}>
-          Cancel
-        </Button>
-        <Button colorScheme="blue" mr={3}>
-          Add
-        </Button>
-      </Flex>
-    </Flex>
-  );
-}
 
 type TypeModalFormSubject = {
   teachers_data: Array<TypeTeacher>;
@@ -130,7 +72,7 @@ function ModalFormSubject({ teachers_data }: TypeModalFormSubject) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormSubject onClose={onClose} teachers_data={teachers_data} />
+            <FormSubject onClose={onClose} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -139,41 +81,93 @@ function ModalFormSubject({ teachers_data }: TypeModalFormSubject) {
 }
 
 type PropData = {
-  subjects: Array<object>;
+  subjects: Array<TypeSubject>;
   teachers: Array<TypeTeacher>;
 };
 
 const Subjects = ({ subjects, teachers }: PropData) => {
-  const router = useRouter();
+  const toast = useToast();
+  const [subjectData, setSubjectData] = useState<Array<TypeSubject>>([]);
+  const [reloadTable, setReloadTable] = useState<Date>(new Date());
+
+  useEffect(() => {
+    axios
+      .get("/api/subjects?include=Teacher")
+      .then(({ data }) => {
+        setSubjectData(
+          data.map((subject: TypeSubject) => ({
+            ...subject,
+            actions: (
+              <Stack direction="row" spacing={2} align="center">
+                {/* <ModalShowDetails 
+                    imageSeed={subject.email}
+                    title={subject.name}
+                    subtitle={subject.email}
+                    items={student.Subject.length > 0 ? student.Subject.map((subject: TypeSubject) =>({id: subject.id, label: subject.topic})) : []}
+                /> */}
+
+                <ModalEditDeleteActions
+                  entityData={subject}
+                  onCallback={() => setReloadTable(new Date())}
+                  action="edit"
+                  typeEntity="subject"
+                  recordTitle={subject.topic}
+                />
+
+                <ModalEditDeleteActions
+                  entityData={subject}
+                  onCallback={() => setReloadTable(new Date())}
+                  action="delete"
+                  typeEntity="subject"
+                  recordTitle={subject.topic}
+                />
+              </Stack>
+            ),
+          }))
+        );
+      })
+      .catch((error) =>
+        toast({
+          title: TOAST_ERROR_TITLE,
+          description: TOAST_ERROR_DESCRIPTION,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        })
+      );
+  }, [reloadTable]);
 
   return (
-    <Container maxW={"container.xl"}>
-      <Heading fontSize={"5xl"}>{router.pathname.replace("/", "")}</Heading>
+    // <Container maxW={"container.xl"}>
+    //   <Heading fontSize={"5xl"}>{router.pathname.replace("/", "")}</Heading>
 
-      <Box bg={"gray.200"} rounded={"md"} p={5} mt={5}>
-        <Flex flexDir={"column"} gap={5} alignItems={"flex-end"}>
-          <ModalFormSubject teachers_data={teachers} />
+    //   <Box bg={"gray.200"} rounded={"md"} p={5} mt={5}>
+    //     <Flex flexDir={"column"} gap={5} alignItems={"flex-end"}>
+    //       <ModalFormSubject teachers_data={teachers} />
 
-          <DataTable columns={columns} data={subjects} striped={true} />
-        </Flex>
-      </Box>
-    </Container>
+    //       <DataTable columns={columns} data={subjects} striped={true} />
+    //     </Flex>
+    //   </Box>
+    // </Container>
+    <MainPage
+      columnsName={columns}
+      entityData={subjectData}
+      handleCallback={() => setReloadTable(new Date())}
+    />
   );
 };
 
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { data: subjects } = await axios.get(
-    `${process.env.APP_URL}/api/subjects`
-  ); // Subjects data fetched
+
   const { data: teachers } = await axios.get(
     `${process.env.APP_URL}/api/teachers`
   ); // Teachers data fetched
 
   return {
     props: {
-      subjects: subjects,
       teachers: teachers,
     },
   };
