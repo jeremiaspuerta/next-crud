@@ -1,6 +1,9 @@
 //Subject module
 export const INPUT_TEACHER_DATA_EMPTY = "To assign a teacher, you should have to create one first.";
 
+//Payment Module
+export const INPUT_SELECT_DATA_EMPTY = (title: string) => `To assign a ${title}, you should have to create one first.`;
+
 //Generic Form
 export const REQUIRED_FIELD_ERROR = 'This field is required.';
 export const EMAIL_FIELD_ERROR_TEACHER = "Please enter a valid email address with 'teacher' domain.";

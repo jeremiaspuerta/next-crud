@@ -24,13 +24,15 @@ import {
 } from "constants/strings";
 import { DELETE_MODAL_DESCRIPTION } from "constants/stringsComponents";
 import { BsTrash } from "react-icons/bs";
-import { FaPencilAlt  } from "react-icons/fa";
-import { TypeAdmin, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
-import FormPerson from "./FormPerson";
+import { FaPencilAlt } from "react-icons/fa";
+import { TypeAdmin, TypePayment, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
+import FormPayment from "./FormPayment";
+import FormTeacherStudent from "./FormTeacherStudent";
+import FormSubject from "./FormSubject";
 
 type TypeModalEditDeleteActions = {
   action: "edit" | "delete" | "read";
-  entityData: TypeTeacher | TypeStudent | TypeAdmin | TypeSubject;
+  entityData: TypeTeacher | TypeStudent | TypeAdmin | TypeSubject | TypePayment;
   typeEntity: string;
   onCallback?: () => void;
   recordTitle: string;
@@ -41,12 +43,10 @@ export const ModalEditDeleteActions = ({
   entityData,
   typeEntity,
   onCallback,
-  recordTitle
+  recordTitle,
 }: TypeModalEditDeleteActions) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  console.log(typeEntity)
 
   const handleDeleteRecord = () => {
     axios
@@ -78,20 +78,18 @@ export const ModalEditDeleteActions = ({
     <>
       <Button
         onClick={onOpen}
-        colorScheme={
-          action == "delete" ? "red" : "blue"
-        }
+        colorScheme={action == "delete" ? "red" : "blue"}
         variant="solid"
         size={"sm"}
       >
-        {action == "edit" ? (
-          <FaPencilAlt />
-        ) : (
-          action == "delete" && <BsTrash />
-        )}
+        {action == "edit" ? <FaPencilAlt /> : action == "delete" && <BsTrash />}
       </Button>
 
-      <Modal onClose={onClose} isOpen={isOpen}>
+      <Modal
+        onClose={onClose}
+        isOpen={isOpen}
+        isCentered={action == "delete" ? true : false}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -100,12 +98,10 @@ export const ModalEditDeleteActions = ({
               : action == "delete" && DELETE_MODAL_TITLE}
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody p={5}>
+          <ModalBody p={5} textAlign={action == "delete" ? "center" : "start"}>
             {action == "delete" ? (
               <>
-                {DELETE_MODAL_DESCRIPTION(
-                  `${recordTitle}`
-                )}
+                {DELETE_MODAL_DESCRIPTION(`${recordTitle}`)}
 
                 <Stack
                   mt={5}
@@ -132,17 +128,23 @@ export const ModalEditDeleteActions = ({
                   </Button>
                 </Stack>
               </>
-            ) : (
-              action == "edit" && ['teacher','student','admin'].includes(typeEntity) ? (
-                <FormPerson
-                  onClose={onClose}
-                  typePerson={typeEntity}
-                  defaultData={entityData}
-                  edit={true}
-                  onCallback={onCallback}
-                />
-              ) : <p>edit subject</p>
-            )}
+            ) : action == "edit" &&
+              ["teacher", "student", "admin"].includes(typeEntity) ? (
+              <FormTeacherStudent
+                onClose={onClose}
+                typePerson={typeEntity}
+                defaultData={entityData}
+                edit={true}
+                onCallback={onCallback}
+              />
+            ) : typeEntity == 'subject' ? (
+              <FormSubject
+                onClose={onClose}
+                defaultData={entityData}
+                edit={true}
+                onCallback={onCallback}
+              />
+            ) : <FormPayment onClose={onClose} defaultData={entityData} edit={true} onCallback={onCallback}/>}
           </ModalBody>
         </ModalContent>
       </Modal>

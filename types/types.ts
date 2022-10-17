@@ -1,10 +1,4 @@
-export type TypeSubject = {
-  id: number;
-  topic: string;
-  description: string;
-  cost: number;
-  teacher_id: number;
-};
+
 
 export type TypePerson = {
   id: number;
@@ -16,13 +10,23 @@ export type TypePerson = {
   created_at: Date;
 };
 
+export type TypeSubject = {
+  id: number;
+  topic: string;
+  description: string;
+  monthly_cost: number | string;
+  duration_in_months: number | string;
+  teacher_id: number | string;
+};
+
 export type TypeTeacher = TypePerson & {
   
   Subject: Array<TypeSubject>;
 };
 
+
 export type TypeStudent = TypePerson & {
-  Subject: Array<TypeSubject>;
+  Subjects: Array<TypeSubject>;
 };
 
 export type TypeAdmin = TypePerson;
@@ -40,3 +44,13 @@ export type TypeCardProfile = {
   description?: string;
   items?: Array<TypeItemProfile> | [];
 };
+
+export type TypePayment = {
+  id: number;
+  student_id: number;
+  subject_id: number;
+  price: number;
+  created_at: string;
+  Student?: TypeStudent;
+  Subject?: TypeSubject;
+}

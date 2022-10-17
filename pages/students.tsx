@@ -42,7 +42,7 @@ const Students = () => {
 
   useEffect(() => {
     axios
-      .get("/api/students?include=Subject")
+      .get("/api/students?include=Subjects")
       .then(({ data }) => {
         setStudentData(
           data.map((student: TypeStudent) => ({
@@ -53,7 +53,7 @@ const Students = () => {
                     imageSeed={student.email}
                     title={student.name}
                     subtitle={student.email}
-                    items={student.Subject.length > 0 ? student.Subject.map((subject: TypeSubject) =>({id: subject.id, label: subject.topic})) : []}
+                    items={student.Subjects.length > 0 ? student.Subjects.map((subject: TypeSubject) =>({id: subject.id, label: subject.topic})) : []}
                 />
 
                 <ModalEditDeleteActions

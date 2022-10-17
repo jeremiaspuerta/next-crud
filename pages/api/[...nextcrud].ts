@@ -11,12 +11,13 @@ const handler = async (req: any, res: any) => {
       prismaClient: prisma,
     }),
     onRequest(req, res, options) {
-      const { body } = req;
+      const { body, url } = req;
 
       if (body.password) {
         body.password = bcrypt.hashSync(body.password, 5);
       }
-    },
+
+    }
   });
   return nextCrudHandler(req, res);
 };

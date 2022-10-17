@@ -1,24 +1,11 @@
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Stack,
-  useDisclosure,
+  Tag,
   useToast,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import axios from "axios";
-import { HiPlusSm } from "react-icons/hi";
 import { TypeSubject, TypeTeacher } from "types/types";
-import {
-  BUTTON_OPEN_FORM_SUBJECT,
-  TITLE_MODAL_FORM_SUBJECT,
-} from "constants/strings";
-import FormSubject from "components/FormSubject";
 import MainPage from "components/MainPage";
 import { useEffect, useState } from "react";
 import { ModalEditDeleteActions } from "components/ModalEditDeleteActions";
@@ -39,46 +26,18 @@ const columns = [
   },
   {
     name: "Teacher",
-    selector: (row: any) => `${row.Teacher.lastname.toUpperCase()}, ${row.Teacher.name.toUpperCase()}`,
+    selector: (row: any) => row.Teacher ? `${row.Teacher.lastname.toUpperCase()}, ${row.Teacher.name.toUpperCase()}` : <Tag>Not Selected</Tag>,
   },
   {
-    name: "Cost",
-    selector: (row: any) => row.cost,
+    name: "Duration",
+    selector: (row: any) => `${row.duration_in_months} months`,
+  },
+  {
+    name: "Cost (per month)",
+    selector: (row: any) => `$${row.monthly_cost}`,
   },
 ];
 
-type TypeModalFormSubject = {
-  teachers_data: Array<TypeTeacher>;
-};
-
-function ModalFormSubject({ teachers_data }: TypeModalFormSubject) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  return (
-    <>
-      <Button
-        onClick={onOpen}
-        colorScheme={"blue"}
-        leftIcon={<HiPlusSm size={"24px"} />}
-      >
-        {BUTTON_OPEN_FORM_SUBJECT}
-      </Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader textTransform={"capitalize"}>
-            {TITLE_MODAL_FORM_SUBJECT}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormSubject onClose={onClose} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
-  );
-}
 
 type PropData = {
   subjects: Array<TypeSubject>;
@@ -139,17 +98,6 @@ const Subjects = ({ subjects, teachers }: PropData) => {
   }, [reloadTable]);
 
   return (
-    // <Container maxW={"container.xl"}>
-    //   <Heading fontSize={"5xl"}>{router.pathname.replace("/", "")}</Heading>
-
-    //   <Box bg={"gray.200"} rounded={"md"} p={5} mt={5}>
-    //     <Flex flexDir={"column"} gap={5} alignItems={"flex-end"}>
-    //       <ModalFormSubject teachers_data={teachers} />
-
-    //       <DataTable columns={columns} data={subjects} striped={true} />
-    //     </Flex>
-    //   </Box>
-    // </Container>
     <MainPage
       columnsName={columns}
       entityData={subjectData}

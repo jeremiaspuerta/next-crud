@@ -11,66 +11,76 @@ datasource db {
 }
 
 model Admin {
-  id  Int @id @default(autoincrement())
-  name  String @db.VarChar(150)
-  lastname  String @db.VarChar(150)
-  email  String @db.VarChar(150) @unique
-  document_number  String @db.VarChar(150)
-  password  String @db.VarChar(150)
-  created_at  DateTime @default(now())  @db.Timestamp(6)
+  id              Int      @id @default(autoincrement())
+  name            String   @db.VarChar(150)
+  lastname        String   @db.VarChar(150)
+  email           String   @unique @db.VarChar(150)
+  document_number String   @db.VarChar(150)
+  password        String   @db.VarChar(150)
+  created_at      DateTime @default(now()) @db.Timestamp(6)
 }
 
 model Student {
-  id  Int @id @default(autoincrement())
-  name  String @db.VarChar(150)
-  lastname  String @db.VarChar(150)
-  email  String @db.VarChar(150) @unique
-  document_number  String @db.VarChar(150)
-  password  String @db.VarChar(150)
-  created_at  DateTime @default(now())  @db.Timestamp(6)
-  Payment Payment?
-  Subject StudentHasSubject[]
-}
-
-model Teacher {
-  id  Int @id @default(autoincrement())
-  name  String @db.VarChar(150)
-  lastname  String @db.VarChar(150)
-  email  String @db.VarChar(150) @unique
-  document_number  String @db.VarChar(150)
-  password  String @db.VarChar(150)
-  created_at  DateTime @default(now())  @db.Timestamp(6)
-  Subject Subject[]
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(150)
+  lastname        String    @db.VarChar(150)
+  email           String    @unique @db.VarChar(150)
+  document_number String    @db.VarChar(150)
+  password        String    @db.VarChar(150)
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  Payment         Payment[]
+  Subjects        Course[]
 }
 
 model Subject {
-  id  Int @id @default(autoincrement())
-  topic  String @db.VarChar(150) @unique
-  description  String @db.VarChar(255)
-  cost  Float
-  teacher_id  Int 
-  Teacher Teacher @relation(fields: [teacher_id], references: [id])
-  Payment Payment?
-  Subject StudentHasSubject[]
+  id          Int       @id @default(autoincrement())
+  topic       String    @unique @db.VarChar(150)
+  description String    @db.VarChar(255)
+  monthly_cost  Float
+  duration_in_months  Int
+  teacher_id  Int? 
+  Teacher     Teacher?   @relation(fields: [teacher_id], references: [id])
+  Payment     Payment[]
+  Students    Course[]
+}
+
+model Course {
+  id          Int       @id @default(autoincrement())
+  student_id Int
+  Student Student @relation(fields: [student_id], references: [id])
+
+  subject_id Int
+  Subject Subject @relation(fields: [subject_id], references: [id])
+
+  grade Float
+
+}
+
+model Teacher {
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(150)
+  lastname        String    @db.VarChar(150)
+  email           String    @unique @db.VarChar(150)
+  document_number String    @db.VarChar(150)
+  password        String    @db.VarChar(150)
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  Subject         Subject[]
 }
 
 model Payment {
-  id  Int @id @default(autoincrement())
-  student_id  Int @unique
-  Student Student @relation(fields: [student_id], references: [id])
-  subject_id Int @unique
-  Subject Subject @relation(fields: [subject_id], references: [id])
-  price  Float
-  created_at  DateTime @default(now())  @db.Timestamp(6)
-}
-
-model StudentHasSubject {
+  id         Int      @id @default(autoincrement())
   student_id Int
-  student Student @relation(fields: [student_id],references: [id])
+  Student    Student  @relation(fields: [student_id], references: [id])
   subject_id Int
-  subject Subject @relation(fields: [subject_id],references: [id])
-
-  @@id([student_id,subject_id])
-
+  Subject    Subject  @relation(fields: [subject_id], references: [id])
+  price      Float
+  expiration_day Int
+  paid_on DateTime?
+  created_at DateTime @default(now()) @db.Timestamp(6)
 }
 
+model System {
+  id         Int      @id @default(autoincrement())
+  subjects_by_student Int
+  subjects_by_teacher Int
+}

@@ -31,7 +31,7 @@ import dayjs from "dayjs";
 import { BsTrash } from "react-icons/bs";
 import { FaPencilAlt, FaRegEye } from "react-icons/fa";
 import { TypeAdmin, TypeCardProfile, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
-import FormPerson from "./FormPerson";
+import FormTeacherStudent from "./FormTeacherStudent";
 import uniqolor from "uniqolor";
 import CardProfile from "./CardProfile";
 

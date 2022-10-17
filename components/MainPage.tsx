@@ -13,17 +13,15 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  BUTTON_OPEN_FORM,
-  TITLE_MODAL_FORM,
-} from "constants/strings";
+import { BUTTON_OPEN_FORM, TITLE_MODAL_FORM } from "constants/strings";
 import { useRouter } from "next/router";
 import DataTable from "react-data-table-component";
 import { HiPlusSm } from "react-icons/hi";
 import { TypeAdmin, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
-import FormPerson from "components/FormPerson";
+import FormTeacherStudent from "components/FormTeacherStudent";
 import { ReactElement } from "react";
 import FormSubject from "./FormSubject";
+import FormPayment from "./FormPayment";
 
 type TypeModalFormSubject = {
   defaultData?: TypeTeacher;
@@ -54,16 +52,26 @@ function ModalCreate({
           <ModalHeader>{TITLE_MODAL_FORM(entityType)}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            
-            {
-              ['teacher','student','admin'].includes(entityType) ?             <FormPerson
-              onClose={onClose}
-              onCallback={() => onReloadTable()}
-              defaultData={defaultData}
-              typePerson={entityType}
-            /> : <FormSubject onClose={onClose} />
-            }
-
+            {["teacher", "student", "admin"].includes(entityType) ? (
+              <FormTeacherStudent
+                onClose={onClose}
+                onCallback={() => onReloadTable()}
+                defaultData={defaultData}
+                typePerson={entityType}
+              />
+            ) : entityType == "subject" ? (
+              <FormSubject
+                onClose={onClose}
+                onCallback={() => onReloadTable()}
+                defaultData={defaultData}
+              />
+            ) : (
+              <FormPayment
+                onClose={onClose}
+                onCallback={() => onReloadTable()}
+                defaultData={defaultData}
+              />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

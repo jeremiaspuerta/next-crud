@@ -1,13 +1,12 @@
 import { Button, Flex, FormControl, FormHelperText, FormLabel, Input, InputGroup, InputRightElement, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { EMAIL_FIELD_ERROR_PERSON, INPUT_MIN_LENGTH_ERROR, REQUIRED_FIELD_ERROR, TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE, TOAST_SUCCESS_TITLE, TOAST_SUCCESS_UPDATED_TITLE } from "constants/messages";
-import { BUTTON_ADD, BUTTON_CANCEL, BUTTON_UPDATE, INPUT_DOCUMENT_NUMBER_FORM_PERSON, INPUT_EMAIL_FORM_PERSON, INPUT_LASTNAME_FORM_PERSON, INPUT_NAME_FORM_PERSON, INPUT_PASSWORD_FORM_PERSON } from "constants/strings";
+import { BUTTON_ADD, BUTTON_CANCEL, BUTTON_UPDATE, INPUT_DOCUMENT_NUMBER_FORM_PERSON, INPUT_EMAIL_FORM_PERSON, INPUT_LASTNAME_FORM_PERSON, INPUT_NAME_FORM_PERSON, INPUT_PASSWORD_FORM_PERSON, INPUT_SUBJECT_FORM_PERSON } from "constants/strings";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { TypeAdmin, TypeStudent, TypeTeacher } from "types/types";
 
-type TypeFormPerson = {
+type TypeFormTeacherStudent = {
     defaultData?: any;
     onClose: () => void;
     onCallback?: () => void;
@@ -23,13 +22,13 @@ type TypeInputsForm = {
     password?: string;
   };
 
-export default function FormPerson({
+export default function FormTeacherStudent({
     defaultData,
     onClose,
     onCallback,
     edit = false,
     typePerson,
-  }: TypeFormPerson) {
+  }: TypeFormTeacherStudent) {
     const toast = useToast();
     const [submit, setSubmit] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -114,6 +113,7 @@ export default function FormPerson({
           <FormControl>
             <FormLabel>{INPUT_NAME_FORM_PERSON}</FormLabel>
             <Input
+              autoFocus={true}
               isInvalid={errors.name ? true : false}
               defaultValue={defaultData?.name}
               {...register(INPUT_NAME_FORM_PERSON, {
@@ -158,6 +158,23 @@ export default function FormPerson({
               </FormHelperText>
             )}
           </FormControl>
+
+
+          {/* <FormControl>
+            <FormLabel>{INPUT_SUBJECT_FORM_PERSON}</FormLabel>
+            <Input
+              defaultValue={defaultData?.document_number}
+              isInvalid={errors.document_number ? true : false}
+              type={"number"}
+              {...register("subject_id", { required: REQUIRED_FIELD_ERROR })}
+              autoComplete={"off"}
+            />
+            {errors.document_number && (
+              <FormHelperText color={"red"}>
+                {errors.document_number.message}
+              </FormHelperText>
+            )}
+          </FormControl> */}
   
           <FormControl>
             <FormLabel>{INPUT_EMAIL_FORM_PERSON}</FormLabel>
