@@ -1,18 +1,22 @@
-import {  ReactNode } from "react";
+import { ReactNode } from "react";
 import NavBar from "./Navbar";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 type LayoutType = {
-    children: ReactNode;
-}
+  children: ReactNode;
+};
 
 export default function Layout({ children }: LayoutType) {
-    return (
-      <>
-        <title>CRUD</title>
+  const { data: session } = useSession();
 
-        <NavBar />
-        <main style={{marginTop:'5vh'}}>{children}</main>
-        {/* <Footer /> */}
-      </>
-    )
-  }
+  return (
+    <>
+      <title>CRUD</title>
+
+      {session &&  <NavBar />}
+      
+      <main>{children}</main>
+      {/* <Footer /> */}
+    </>
+  );
+}

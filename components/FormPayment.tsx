@@ -146,7 +146,7 @@ export default function FormPayment({
   }, []);
 
   function handleChangeStudent(student_id: string){
-    
+    setValue('subject_id','');
 
     if (student_id) {
 
@@ -234,7 +234,6 @@ export default function FormPayment({
               placeholder="Select option"
               isInvalid={errors.subject_id ? true : false}
               defaultValue={defaultData?.subject_id}
-              isDisabled={false}
               {...register("subject_id", {
                 required: REQUIRED_FIELD_ERROR,
               })}

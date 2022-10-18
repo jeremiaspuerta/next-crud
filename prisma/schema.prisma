@@ -74,8 +74,8 @@ model Payment {
   subject_id Int
   Subject    Subject  @relation(fields: [subject_id], references: [id])
   price      Float
-  expiration_day Int
-  paid_on DateTime?
+  expiration_day Int?
+  paid_on DateTime? 
   created_at DateTime @default(now()) @db.Timestamp(6)
 }
 
