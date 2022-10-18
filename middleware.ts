@@ -1,3 +1,9 @@
-export { default } from "next-auth/middleware"
+import { NextRequest, NextResponse } from "next/server";
 
-export const config = { matcher: ["/teacher","/students","/subjects","/admins","/payments"] }
+export { default } from "next-auth/middleware";
+
+export const config = {
+  matcher: ["/","/teachers", "/students", "/subjects", "/admins", "/payments"],
+};
+
+
