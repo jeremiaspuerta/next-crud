@@ -1,12 +1,12 @@
 import { Stack, useToast } from "@chakra-ui/react";
-import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "constants/messages";
+import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "src/constants/messages";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { TypeSubject, TypeTeacher } from "types/types";
+import { TypeSubject, TypeTeacher } from "src/types/types";
 import dayjs from "dayjs";
-import { ModalEditDeleteActions } from "components/ModalEditDeleteActions";
-import MainPage from "components/MainPage";
-import { ModalShowDetails } from "components/ModalShowDetails";
+import { ModalEditDeleteActions } from "src/components/ModalEditDeleteActions";
+import MainPage from "src/components/MainPage";
+import { ModalShowDetails } from "src/components/ModalShowDetails";
 
 const columns = [
   {

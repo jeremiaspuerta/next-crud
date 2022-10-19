@@ -52,7 +52,7 @@ model Course {
   subject_id Int
   Subject Subject @relation(fields: [subject_id], references: [id])
 
-  grade Float
+  grade Float?
 
 }
 

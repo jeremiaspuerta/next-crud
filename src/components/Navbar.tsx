@@ -19,11 +19,11 @@ import {
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-const Links = ["Subjects", "Teachers", "Students", "Payments","Admins"];
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const NavLink = ({ children }: { children: String }) => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   return (
     <Link href={`/${children.toLowerCase()}`}>
@@ -31,8 +31,14 @@ const NavLink = ({ children }: { children: String }) => {
         px={2}
         py={1}
         rounded={"md"}
-        fontWeight={router.pathname.includes(children.toLowerCase()) ? 'bold' : 'normal'}
-        bg={router.pathname.includes(children.toLowerCase()) ? 'gray.200' : 'gray.100'}
+        fontWeight={
+          router.pathname.includes(children.toLowerCase()) ? "bold" : "normal"
+        }
+        bg={
+          router.pathname.includes(children.toLowerCase())
+            ? "gray.200"
+            : "gray.100"
+        }
         _hover={{
           textDecoration: "none",
           bg: useColorModeValue("gray.200", "gray.700"),
@@ -46,6 +52,41 @@ const NavLink = ({ children }: { children: String }) => {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data: session } = useSession();
+
+  console.log(session);
+
+  const Links = [
+    {
+      name: "Subjects",
+      show: session?.user?.email
+        ? session.user.email.includes("teacher") ||
+          session.user.email.includes("student") ||
+          session.user.email.includes("admin")
+        : false,
+    },
+    {
+      name: "Teachers",
+      show: session?.user?.email ? session.user.email.includes("admin") : false,
+    },
+    {
+      name: "Students",
+      show: session?.user?.email
+        ? session.user.email.includes("teacher") || session.user.email.includes("admin") 
+        : false,
+    },
+    {
+      name: "Payments",
+      show: session?.user?.email
+        ? session.user.email.includes("student") ||
+          session.user.email.includes("admin")
+        : false,
+    },
+    {
+      name: "Admins",
+      show: session?.user?.email ? session.user.email.includes("admin") : false,
+    },
+  ];
 
   return (
     <>
@@ -59,15 +100,15 @@ export default function NavBar() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            {/* <Box></Box> */}
             <HStack
               as={"nav"}
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
-              ))}
+              {Links.map(
+                (link) =>
+                  link.show && <NavLink key={link.name}>{link.name}</NavLink>
+              )}
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
@@ -81,15 +122,13 @@ export default function NavBar() {
               >
                 <Avatar
                   size={"sm"}
-                  src={
-                    "https://avatars.dicebear.com/api/bottts/jeremiaspuerta12@gmail.com.svg?r=50&scale=83"
-                  }
+                  src={`https://avatars.dicebear.com/api/bottts/${session?.user?.email}.svg?r=50&scale=83`}
                 />
               </MenuButton>
               <MenuList>
-                <MenuItem>Mi perfil</MenuItem>
+                <MenuItem textAlign={'center'}>{`${session?.user?.name}` || `Mi perfil`}</MenuItem>
                 <MenuDivider />
-                <MenuItem>Cerrar sesión</MenuItem>
+                <MenuItem onClick={() => signOut()}>Cerrar sesión</MenuItem>
               </MenuList>
             </Menu>
           </Flex>
@@ -98,9 +137,10 @@ export default function NavBar() {
         {isOpen ? (
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
-              ))}
+              {Links.map(
+                (link) =>
+                  link.show && <NavLink key={link.name}>{link.name}</NavLink>
+              )}
             </Stack>
           </Box>
         ) : null}

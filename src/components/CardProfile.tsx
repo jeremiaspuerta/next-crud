@@ -10,7 +10,7 @@ import {
   Badge,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { TypeCardProfile } from "types/types";
+import { TypeCardProfile } from "src/types/types";
 import uniqolor from "uniqolor";
 
 export default function CardProfile({

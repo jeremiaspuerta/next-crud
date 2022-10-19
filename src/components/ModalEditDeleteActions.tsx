@@ -15,17 +15,17 @@ import {
   TOAST_ERROR_DESCRIPTION,
   TOAST_ERROR_TITLE,
   TOAST_INFO_DELETE_TITLE,
-} from "constants/messages";
+} from "src/constants/messages";
 import {
   BUTTON_CANCEL,
   BUTTON_DELETE,
   DELETE_MODAL_TITLE,
   EDIT_MODAL_TITLE,
-} from "constants/strings";
-import { DELETE_MODAL_DESCRIPTION } from "constants/stringsComponents";
+} from "src/constants/strings";
+import { DELETE_MODAL_DESCRIPTION } from "src/constants/stringsComponents";
 import { BsTrash } from "react-icons/bs";
 import { FaPencilAlt } from "react-icons/fa";
-import { TypeAdmin, TypePayment, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
+import { TypeAdmin, TypePayment, TypeStudent, TypeSubject, TypeTeacher } from "src/types/types";
 import FormPayment from "./FormPayment";
 import FormTeacherStudent from "./FormTeacherStudent";
 import FormSubject from "./FormSubject";

@@ -16,16 +16,20 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials, _req) => {
+
         try {
+
           const { data, status } = await axios.get(
             `${process.env.APP_URL}/api/signin?email=${credentials?.email}&password=${credentials?.password}`
           );
 
+
           if (status === 200) {
+
             return {
               id: data.id,
               email: data.email,
-              name: data.name,
+              name: `${data.name} ${data.lastname}`,
               lastname: data.lastname,
             };
           }
@@ -41,6 +45,10 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }: any) {
+      if (account) {
+        token.accessToken = account.access_token
+        token.id = user.id
+      }
       return token
     },
     async signIn({ user, account, profile, email, credentials }: any) {
@@ -55,12 +63,7 @@ export const authOptions = {
 
       return session; // The return type will match the one returned in `useSession()`
     }
-  },
-
-  pages: {
-    signIn: "/auth/signin",
-    error: '/auth/error',
-  },
+  }
 
 };
 export default NextAuth(authOptions);

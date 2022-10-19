@@ -13,15 +13,18 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { BUTTON_OPEN_FORM, TITLE_MODAL_FORM } from "constants/strings";
+import { BUTTON_OPEN_FORM, TITLE_MODAL_FORM } from "src/constants/strings";
 import { useRouter } from "next/router";
 import DataTable from "react-data-table-component";
 import { HiPlusSm } from "react-icons/hi";
-import { TypeAdmin, TypeStudent, TypeSubject, TypeTeacher } from "types/types";
-import FormTeacherStudent from "components/FormTeacherStudent";
-import { ReactElement } from "react";
+import {
+
+  TypeTeacher,
+} from "src/types/types";
+import FormTeacherStudent from "src/components/FormTeacherStudent";
 import FormSubject from "./FormSubject";
 import FormPayment from "./FormPayment";
+import { useSession } from "next-auth/react";
 
 type TypeModalFormSubject = {
   defaultData?: TypeTeacher;
@@ -35,16 +38,21 @@ function ModalCreate({
   entityType,
 }: TypeModalFormSubject) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data: session } = useSession();
 
   return (
     <>
-      <Button
-        onClick={onOpen}
-        colorScheme={"green"}
-        leftIcon={<HiPlusSm size={"24px"} />}
-      >
-        {BUTTON_OPEN_FORM(entityType)}
-      </Button>
+      {session?.user?.email && session.user.email.includes("admin") ? (
+        <Button
+          onClick={onOpen}
+          colorScheme={"green"}
+          leftIcon={<HiPlusSm size={"24px"} />}
+        >
+          {BUTTON_OPEN_FORM(entityType)}
+        </Button>
+      ) : (
+        false
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -115,7 +123,7 @@ const MainPage = ({
   const router = useRouter();
 
   return (
-    <Container maxW={"container.xl"}>
+    <Container maxW={"container.xl"} mt={5}>
       <Heading fontSize={"5xl"}>{router.pathname.replace("/", "")}</Heading>
 
       <Box bg={"gray.200"} rounded={"md"} p={5} mt={5}>

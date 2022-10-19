@@ -13,7 +13,7 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { REQUIRED_FIELD_ERROR } from "constants/messages";
+import { REQUIRED_FIELD_ERROR } from "src/constants/messages";
 import axios from "axios";
 
 type TypeInputsForm = {

@@ -1,10 +1,10 @@
 import { Stack, useToast } from "@chakra-ui/react";
 import axios from "axios";
-import { TypePayment } from "types/types";
-import MainPage from "components/MainPage";
+import { TypePayment } from "src/types/types";
+import MainPage from "src/components/MainPage";
 import { useEffect, useState } from "react";
-import { ModalEditDeleteActions } from "components/ModalEditDeleteActions";
-import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "constants/messages";
+import { ModalEditDeleteActions } from "src/components/ModalEditDeleteActions";
+import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE } from "src/constants/messages";
 import dayjs from "dayjs";
 
 const columns = [

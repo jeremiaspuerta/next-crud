@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { PrismaClient, Prisma } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TypeAdmin, TypeSubject, TypeTeacher } from "types/types";
 import bcrypt from "bcrypt";
 
 type Data = {
@@ -21,7 +20,9 @@ export default async function handler(
     if (method == "GET") {
       const prisma = new PrismaClient();
       const { email, password }: any = req.query;
+
       let user: any;
+      let user_id: number | null;
 
       if (email) {
         if (email.includes("teacher")) {
@@ -30,11 +31,13 @@ export default async function handler(
               email: email,
             },
           });
+
+        
         } else if (email.includes("student")) {
-          user = await prisma.student.findFirst({
+          user = await prisma.student.findUnique({
             where: {
               email: email,
-            },
+            }
           });
         } else {
           user = await prisma.admin.findFirst({

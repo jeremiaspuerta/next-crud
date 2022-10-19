@@ -19,7 +19,7 @@ import {
   TOAST_ERROR_TITLE,
   TOAST_SUCCESS_TITLE,
   TOAST_SUCCESS_UPDATED_TITLE,
-} from "constants/messages";
+} from "src/constants/messages";
 import {
   BUTTON_ADD,
   BUTTON_CANCEL,
@@ -29,9 +29,9 @@ import {
   INPUT_DURATION_FORM_SUBJECT,
   INPUT_TEACHER_FORM_SUBJECT,
   INPUT_TOPIC_FORM_SUBJECT,
-} from "constants/strings";
+} from "src/constants/strings";
 import { useEffect, useState } from "react";
-import { TypeSubject, TypeTeacher } from "types/types";
+import { TypeSubject, TypeTeacher } from "src/types/types";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type TypeFormSubject = {
