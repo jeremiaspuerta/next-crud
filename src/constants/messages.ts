@@ -14,3 +14,4 @@ export const TOAST_SUCCESS_UPDATED_TITLE = 'Record updated!';
 export const TOAST_ERROR_TITLE = 'We have a little problem.';
 export const TOAST_ERROR_DESCRIPTION = 'Please try again later.';
 export const TOAST_INFO_DELETE_TITLE = 'Record deleted!';
+export const TOAST_SUCCESS_JOIN_ASSIGN_SUBJECT = (subject: string) => `You have joined to ${subject}`;

@@ -21,21 +21,20 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-const NavLink = ({ children }: { children: String }) => {
+const NavLink = ({link, children }: { children: String,link: String }) => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   return (
-    <Link href={`/${children.toLowerCase()}`}>
+    <Link href={`/${link}`}>
       <LinkTag
         px={2}
         py={1}
         rounded={"md"}
         fontWeight={
-          router.pathname.includes(children.toLowerCase()) ? "bold" : "normal"
+          router.pathname == `/${link}` ? "bold" : "normal"
         }
         bg={
-          router.pathname.includes(children.toLowerCase())
+          router.pathname == `/${link}`
             ? "gray.200"
             : "gray.100"
         }
@@ -54,9 +53,12 @@ export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { data: session } = useSession();
 
-  console.log(session);
-
   const Links = [
+    {
+      name: "Home",
+      show: true,
+      link: ''
+    },
     {
       name: "Subjects",
       show: session?.user?.email
@@ -64,33 +66,38 @@ export default function NavBar() {
           session.user.email.includes("student") ||
           session.user.email.includes("admin")
         : false,
+        link: 'subjects'
     },
     {
       name: "Teachers",
       show: session?.user?.email ? session.user.email.includes("admin") : false,
+      link: 'teachers'
     },
     {
       name: "Students",
       show: session?.user?.email
         ? session.user.email.includes("teacher") || session.user.email.includes("admin") 
         : false,
+        link: 'students'
     },
     {
       name: "Payments",
       show: session?.user?.email
-        ? session.user.email.includes("student") ||
+        ?
           session.user.email.includes("admin")
         : false,
+        link: 'payments'
     },
     {
       name: "Admins",
       show: session?.user?.email ? session.user.email.includes("admin") : false,
+      link: 'admins'
     },
   ];
 
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4} boxShadow="0px 15px 15px -4px rgb(0 0 0 / 7%)">
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
             size={"md"}
@@ -107,7 +114,7 @@ export default function NavBar() {
             >
               {Links.map(
                 (link) =>
-                  link.show && <NavLink key={link.name}>{link.name}</NavLink>
+                  link.show && <NavLink key={link.name} link={link.link}>{link.name}</NavLink>
               )}
             </HStack>
           </HStack>
@@ -121,8 +128,11 @@ export default function NavBar() {
                 minW={0}
               >
                 <Avatar
-                  size={"sm"}
+                  height={'4vh'}
+                  width={'auto'}
                   src={`https://avatars.dicebear.com/api/bottts/${session?.user?.email}.svg?r=50&scale=83`}
+                  border={'2px solid #3BB273'}
+                  backgroundColor={'white'}
                 />
               </MenuButton>
               <MenuList>
@@ -139,7 +149,7 @@ export default function NavBar() {
             <Stack as={"nav"} spacing={4}>
               {Links.map(
                 (link) =>
-                  link.show && <NavLink key={link.name}>{link.name}</NavLink>
+                  link.show && <NavLink key={link.name} link={link.link}>{link.name}</NavLink>
               )}
             </Stack>
           </Box>

@@ -1,5 +1,5 @@
 export default function Index() {
     return (
-        <div>Hola</div>
+        <div>Home Page</div>
     )
 }

@@ -1,4 +1,4 @@
-import { Stack, Tag, useToast } from "@chakra-ui/react";
+import { Stack, Tag, useToast, Link as LinkUI } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { TypeSubject, TypeTeacher } from "src/types/types";
@@ -11,6 +11,9 @@ import {
 } from "src/constants/messages";
 import { useSession } from "next-auth/react";
 import AssignUnassignToSubject from "src/components/AssignUnassignToSubject";
+import ModalDetailsSubject from "src/components/ModalDetailsSubject";
+import Link from "next/link";
+import slugify from 'slugify';
 
 const columns = [
   {
@@ -19,7 +22,7 @@ const columns = [
   },
   {
     name: "Topic",
-    selector: (row: any) => row.topic,
+    selector: (row: any) => <LinkUI> <Link href={`/subjects/${slugify(row.topic,{lower: false})}`}><a>{row.topic}</a></Link></LinkUI>,
   },
   {
     name: "Description",
@@ -74,16 +77,19 @@ const Subjects = ({ subjects, teachers }: PropData) => {
               studentSubjectsId = Subjects.map((item: any) => item.subject_id);
             }
 
-            fetchAndSetSubjects([],studentSubjectsId);
+            fetchAndSetSubjects([], studentSubjectsId);
           })
           .catch((err) => console.error(err));
-      }else{
+      } else {
         fetchAndSetSubjects();
       }
     }
   }, [reloadTable, session]);
 
-  function fetchAndSetSubjects(enableSubjectsToAssign: number[] = [], disableSubjectsToAssign: number[] = []) {
+  function fetchAndSetSubjects(
+    enableSubjectsToAssign: number[] = [],
+    disableSubjectsToAssign: number[] = []
+  ) {
     axios
       .get("/api/subjects?include=Teacher")
       .then(({ data }) => {
@@ -92,17 +98,10 @@ const Subjects = ({ subjects, teachers }: PropData) => {
             ...subject,
             actions: (
               <Stack direction="row" spacing={2} align="center">
-                {/* 
-            <ModalShowDetails 
-              imageSeed={subject.email}
-              title={subject.name}
-              subtitle={subject.email}
-              items={student.Subject.length > 0 ? student.Subject.map((subject: TypeSubject) =>({id: subject.id, label: subject.topic})) : []}
-          /> 
-          */}
+                {session.user.email.includes("teacher") && <ModalDetailsSubject entityType={"teacher"} subject={subject} />}
 
-                {(session.user.email.includes("teacher") &&
-                  session.user.id === subject.teacher_id) ? (
+                {session.user.email.includes("teacher") &&
+                session.user.id === subject.teacher_id ? (
                   <AssignUnassignToSubject
                     action={"unassign"}
                     entityType={
@@ -120,9 +119,12 @@ const Subjects = ({ subjects, teachers }: PropData) => {
 
                 {(session.user.email.includes("teacher") &&
                   subject.teacher_id === null) ||
-                (session.user.email.includes("student") && disableSubjectsToAssign.includes(subject.id)) ? (
+                (session.user.email.includes("student") &&
+                  !disableSubjectsToAssign.includes(subject.id)) ? (
                   <AssignUnassignToSubject
-                    action={ session.user.email.includes("teacher") ? "assign" : "join"}
+                    action={
+                      session.user.email.includes("teacher") ? "assign" : "join"
+                    }
                     entityType={
                       session.user.email.includes("teacher")
                         ? "teacher"

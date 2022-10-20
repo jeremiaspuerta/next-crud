@@ -13,6 +13,9 @@ const theme = extendTheme({
             },
             'label,h2,button': {
                 textTransform: 'capitalize'
+            },
+            'a':{
+                color: 'teal.500'
             }
         }
         

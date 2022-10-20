@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
+import { Console } from "console";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -55,7 +56,7 @@ export const authOptions = {
       return true
     },
     async redirect({ url, baseUrl }: any) {
-      return baseUrl
+      return baseUrl;
     },
     session({ session, token, user }: any) {
       session.accessToken = token.accessToken;

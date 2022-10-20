@@ -31,6 +31,7 @@ export const INPUT_SUBJECT_FORM_PERSON = 'subject';
 export const INPUT_EMAIL_FORM_PERSON = 'email';
 export const INPUT_PASSWORD_FORM_PERSON = 'password';
 export const BUTTON_CANCEL = 'cancel';
+export const BUTTON_CLOSE = 'close';
 export const BUTTON_ADD = 'add';
 export const BUTTON_UPDATE = 'update';
 export const DELETE_MODAL_TITLE = 'Delete record';

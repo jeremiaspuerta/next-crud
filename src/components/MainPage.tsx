@@ -25,6 +25,7 @@ import FormTeacherStudent from "src/components/FormTeacherStudent";
 import FormSubject from "./FormSubject";
 import FormPayment from "./FormPayment";
 import { useSession } from "next-auth/react";
+import { ReactElement } from "react";
 
 type TypeModalFormSubject = {
   defaultData?: TypeTeacher;
@@ -111,29 +112,41 @@ type TypeColumnsName = {
 type TypeMainPage = {
   entityData: any;
   columnsName: Array<TypeColumnsName>;
+  breadcrumb?: ReactElement;
+  title?: string;
   handleCallback: () => void;
 };
 
 const MainPage = ({
   entityData,
   columnsName,
+  breadcrumb,
+  title,
   handleCallback,
 }: TypeMainPage) => {
   const toast = useToast();
   const router = useRouter();
 
-  return (
-    <Container maxW={"container.xl"} mt={5}>
-      <Heading fontSize={"5xl"}>{router.pathname.replace("/", "")}</Heading>
+  if(!title && router){
+    title = router.pathname.replace("/", "");
+  }
 
-      <Box bg={"gray.200"} rounded={"md"} p={5} mt={5}>
+  return (
+    <Container maxW={"container.xl"} mt={5} >
+      {
+        breadcrumb && breadcrumb
+      }
+
+      <Heading fontSize={"5xl"} mt={10}>{title}</Heading>
+
+      <Box bg={"gray.200"} rounded={"md"} p={5} mt={5} shadow={'xl'}>
         <Flex flexDir={"column"} gap={5} alignItems={"flex-end"}>
           <ModalCreate
             onReloadTable={() => handleCallback()}
             entityType={router.pathname
               .replace("/", "")
               .toLowerCase()
-              .slice(0, router.pathname.replace("/", "").length - 1)}
+              .slice(0, title ? title.length - 1 : 1)}
           />
 
           <DataTable
