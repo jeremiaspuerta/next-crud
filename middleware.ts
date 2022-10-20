@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export const config = {
-  matcher: ["/home","/teachers", "/students", "/subjects", "/admins", "/payments"],
+  matcher: ["/","/teachers", "/students", "/subjects", "/admins", "/payments"],
 };
 
 

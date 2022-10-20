@@ -1,4 +1,4 @@
-import { Stack, Tag, useToast, Link as LinkUI } from "@chakra-ui/react";
+import { Stack, Tag, useToast, Link as LinkUI, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { TypeSubject, TypeTeacher } from "src/types/types";
@@ -13,39 +13,7 @@ import { useSession } from "next-auth/react";
 import AssignUnassignToSubject from "src/components/AssignUnassignToSubject";
 import ModalDetailsSubject from "src/components/ModalDetailsSubject";
 import Link from "next/link";
-import slugify from 'slugify';
-
-const columns = [
-  {
-    name: "Actions",
-    selector: (row: any) => row.actions,
-  },
-  {
-    name: "Topic",
-    selector: (row: any) => <LinkUI> <Link href={`/subjects/${slugify(row.topic,{lower: false})}`}><a>{row.topic}</a></Link></LinkUI>,
-  },
-  {
-    name: "Description",
-    selector: (row: any) => row.description,
-  },
-  {
-    name: "Teacher",
-    selector: (row: any) =>
-      row.Teacher ? (
-        `${row.Teacher.lastname.toUpperCase()}, ${row.Teacher.name.toUpperCase()}`
-      ) : (
-        <Tag>Not Selected</Tag>
-      ),
-  },
-  {
-    name: "Duration",
-    selector: (row: any) => `${row.duration_in_months} months`,
-  },
-  {
-    name: "Cost (per month)",
-    selector: (row: any) => `$${row.monthly_cost}`,
-  },
-];
+import slugify from "slugify";
 
 type PropData = {
   subjects: Array<TypeSubject>;
@@ -58,6 +26,48 @@ const Subjects = ({ subjects, teachers }: PropData) => {
   const [reloadTable, setReloadTable] = useState<Date>(new Date());
 
   const { data: session }: any = useSession();
+
+  const columns = [
+    {
+      name: "Actions",
+      selector: (row: any) => row.actions,
+    },
+    {
+      name: "Topic",
+      selector: (row: any) =>
+        session?.user?.email.includes("teacher") ? (
+          <LinkUI>
+            {" "}
+            <Link href={`/subjects/${slugify(row.topic, { lower: false })}`}>
+              <a>{row.topic}</a>
+            </Link>
+          </LinkUI>
+        ) : (
+          <Text>{row.topic}</Text>
+        ),
+    },
+    {
+      name: "Description",
+      selector: (row: any) => row.description,
+    },
+    {
+      name: "Teacher",
+      selector: (row: any) =>
+        row.Teacher ? (
+          `${row.Teacher.lastname.toUpperCase()}, ${row.Teacher.name.toUpperCase()}`
+        ) : (
+          <Tag>Not Selected</Tag>
+        ),
+    },
+    {
+      name: "Duration",
+      selector: (row: any) => `${row.duration_in_months} months`,
+    },
+    {
+      name: "Cost (per month)",
+      selector: (row: any) => `$${row.monthly_cost}`,
+    },
+  ];
 
   useEffect(() => {
     if (session?.user) {
@@ -98,7 +108,12 @@ const Subjects = ({ subjects, teachers }: PropData) => {
             ...subject,
             actions: (
               <Stack direction="row" spacing={2} align="center">
-                {session.user.email.includes("teacher") && <ModalDetailsSubject entityType={"teacher"} subject={subject} />}
+                {session.user.email.includes("teacher") && (
+                  <ModalDetailsSubject
+                    entityType={"teacher"}
+                    subject={subject}
+                  />
+                )}
 
                 {session.user.email.includes("teacher") &&
                 session.user.id === subject.teacher_id ? (
