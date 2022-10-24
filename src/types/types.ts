@@ -10,13 +10,21 @@ export type TypePerson = {
   created_at: Date;
 };
 
+export type TypeCourse = {
+  id: number;
+  student_id: number;
+  subject_id: number;
+  grade: number;
+  Student?: TypeStudent[];
+}
+
 export type TypeSubject = {
   id: number;
   topic: string;
   description: string;
   monthly_cost: number | string;
   duration_in_months: number | string;
-  teacher_id: number | string;
+  teacher_id?: number | string;
 };
 
 export type TypeTeacher = TypePerson & {

@@ -45,7 +45,7 @@ export default function FormSubject({
   onClose,
   onCallback,
   defaultData,
-  edit = false
+  edit = false,
 }: TypeFormSubject) {
   const [teachers, setTeachers] = useState<Array<TypeTeacher>>([]);
   const {
@@ -57,43 +57,47 @@ export default function FormSubject({
 
   const toast = useToast();
   const [submit, setSubmit] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit: SubmitHandler<TypeSubject> = async (data) => {
     setSubmit(!submit);
 
-    if (data.teacher_id) data.teacher_id = parseInt(data.teacher_id as string);
+    if (data.teacher_id) {
+      data.teacher_id = parseInt(data.teacher_id as string);
+    }else{
+      delete data.teacher_id;
+    }
 
-    if (data.monthly_cost) data.monthly_cost = parseInt(data.monthly_cost as string);
+    if (data.monthly_cost)
+      data.monthly_cost = parseInt(data.monthly_cost as string);
 
-    if (data.duration_in_months) data.duration_in_months = parseInt(data.duration_in_months as string);
+    if (data.duration_in_months)
+      data.duration_in_months = parseInt(data.duration_in_months as string);
 
     if (edit) {
-        axios
-          .patch(`/api/subjects/${defaultData.id}`, data)
-          .then((response) => {
-            onClose();
-            toast({
-              title: TOAST_SUCCESS_UPDATED_TITLE,
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-              position: "top",
-            });
-            if(onCallback)
-                onCallback();
-          })
-          .catch((error) => {
-            toast({
-              title: TOAST_ERROR_TITLE,
-              description: TOAST_ERROR_DESCRIPTION,
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-              position: "top",
-            });
-          })
-          .finally(() => setSubmit(false));
+      axios
+        .patch(`/api/subjects/${defaultData.id}`, data)
+        .then((response) => {
+          onClose();
+          toast({
+            title: TOAST_SUCCESS_UPDATED_TITLE,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+          if (onCallback) onCallback();
+        })
+        .catch((error) => {
+          toast({
+            title: TOAST_ERROR_TITLE,
+            description: TOAST_ERROR_DESCRIPTION,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+        })
+        .finally(() => setSubmit(false));
     } else {
       axios
         .post(`/api/subjects`, data)
@@ -138,8 +142,7 @@ export default function FormSubject({
             type="text"
             isInvalid={errors.topic ? true : false}
             defaultValue={defaultData?.topic}
-
-            {...register(INPUT_TOPIC_FORM_SUBJECT, {
+            {...register("topic", {
               required: REQUIRED_FIELD_ERROR,
             })}
           />
@@ -173,13 +176,14 @@ export default function FormSubject({
             type="number"
             isInvalid={errors.duration_in_months ? true : false}
             defaultValue={defaultData?.duration_in_months}
-
-            {...register('duration_in_months', {
+            {...register("duration_in_months", {
               required: REQUIRED_FIELD_ERROR,
             })}
           />
           {errors.duration_in_months && (
-            <FormHelperText color={"red"}>{errors.duration_in_months.message}</FormHelperText>
+            <FormHelperText color={"red"}>
+              {errors.duration_in_months.message}
+            </FormHelperText>
           )}
         </FormControl>
 
@@ -189,13 +193,14 @@ export default function FormSubject({
             type="number"
             isInvalid={errors.monthly_cost ? true : false}
             defaultValue={defaultData?.monthly_cost}
-
-            {...register('monthly_cost', {
+            {...register("monthly_cost", {
               required: REQUIRED_FIELD_ERROR,
             })}
           />
           {errors.monthly_cost && (
-            <FormHelperText color={"red"}>{errors.monthly_cost.message}</FormHelperText>
+            <FormHelperText color={"red"}>
+              {errors.monthly_cost.message}
+            </FormHelperText>
           )}
         </FormControl>
 
@@ -206,21 +211,19 @@ export default function FormSubject({
               placeholder="Select option"
               isInvalid={errors.teacher_id ? true : false}
               defaultValue={defaultData?.teacher_id}
-              {...register("teacher_id", {
-                required: REQUIRED_FIELD_ERROR,
-              })}
+              {...register("teacher_id")}
             >
               {teachers.map((teacher: TypeTeacher) => (
-                <option value={teacher.id} key={`${teacher.id}`} >
+                <option value={teacher.id} key={`${teacher.id}`}>
                   {teacher.lastname.toUpperCase()}, {teacher.name.toUpperCase()}
                 </option>
               ))}
             </Select>
-            {errors.teacher_id && (
+            {/* {errors.teacher_id && (
               <FormHelperText color={"red"}>
                 {errors.teacher_id.message}
               </FormHelperText>
-            )}
+            )} */}
           </FormControl>
         ) : (
           <Alert status="info">
@@ -240,7 +243,7 @@ export default function FormSubject({
             mr={3}
             type={"submit"}
             isLoading={submit}
-              loadingText={edit ? "Updating..." : "Creating..."}
+            loadingText={edit ? "Updating..." : "Creating..."}
           >
             {edit ? BUTTON_UPDATE : BUTTON_ADD}
           </Button>

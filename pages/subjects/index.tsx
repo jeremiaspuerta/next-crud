@@ -1,4 +1,4 @@
-import { Stack, Tag, useToast, Link as LinkUI, Text } from "@chakra-ui/react";
+import { Stack, Tag, useToast, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { TypeSubject, TypeTeacher } from "src/types/types";
@@ -36,12 +36,9 @@ const Subjects = ({ subjects, teachers }: PropData) => {
       name: "Topic",
       selector: (row: any) =>
         session?.user?.email.includes("teacher") ? (
-          <LinkUI>
-            {" "}
             <Link href={`/subjects/${slugify(row.topic, { lower: false })}`}>
               <a>{row.topic}</a>
             </Link>
-          </LinkUI>
         ) : (
           <Text>{row.topic}</Text>
         ),

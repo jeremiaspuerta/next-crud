@@ -16,7 +16,11 @@ import { TypeSubject } from "src/types/types";
 import { BUTTON_CANCEL } from "src/constants/strings";
 import { ASSIGN_UNASSIGN_SUBJECT_MODAL_DESCRIPTION } from "src/constants/stringsComponents";
 import axios from "axios";
-import { TOAST_ERROR_DESCRIPTION, TOAST_ERROR_TITLE, TOAST_SUCCESS_JOIN_ASSIGN_SUBJECT } from "src/constants/messages";
+import {
+  TOAST_ERROR_DESCRIPTION,
+  TOAST_ERROR_TITLE,
+  TOAST_SUCCESS_JOIN_ASSIGN_SUBJECT,
+} from "src/constants/messages";
 
 type TypeProps = {
   action: "assign" | "join" | "unassign";
@@ -43,11 +47,21 @@ export default function AssignUnassignToSubject({
           teacher_id: ["assign", "join"].includes(action) ? entityId : null,
         })
         .then((res) => {
-
           onClose();
           callback();
         })
-        .catch((err) => console.error("error"));
+        .catch((err) => {
+          toast({
+            title: TOAST_ERROR_TITLE,
+            description: TOAST_ERROR_DESCRIPTION,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+          onClose();
+          callback();
+        });
     } else {
       if (action === "join") {
         axios
@@ -62,7 +76,7 @@ export default function AssignUnassignToSubject({
               duration: 5000,
               isClosable: true,
               position: "top",
-            }); 
+            });
             onClose();
             callback();
           })
@@ -74,7 +88,7 @@ export default function AssignUnassignToSubject({
               duration: 5000,
               isClosable: true,
               position: "top",
-            })
+            });
             onClose();
             callback();
           });

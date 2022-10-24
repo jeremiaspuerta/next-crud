@@ -2,7 +2,7 @@ import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { TypeSubject, TypeTeacher } from "src/types/types";
+import { TypeCourse } from "src/types/types";
 
 type TypeUser = {
   name: string;
@@ -58,24 +58,34 @@ const Card = ({ title, description, url, colorA, colorB, price }: TypeCard) => {
   );
 };
 
-type TypeTeacherDashboard = TypeSubject & {
+type TypeTeacherDashboard = {
   totalPerMonth: number;
 };
 
 export const TeacherDashboard = ({ name, id }: TypeUser) => {
-  const [teacherData, setTeacherData] = useState<TypeTeacherDashboard[]>();
+  const [teacherData, setTeacherData] = useState<any>();
 
   useEffect(() => {
     axios
       .get(`/api/subjects?include=Students&where={"teacher_id":${id}}`)
       .then(({ data }) => {
         let totalPerMonth: number = 0;
+        let totalStudents:number[] = [];
 
-        data.forEach((item: TypeSubject) => {
+        data.forEach((item: any) => {
           totalPerMonth = totalPerMonth + parseInt(item.monthly_cost as string);
+
+          if(item.Students){
+            item.Students.forEach((student:TypeCourse)  => {
+                if(!totalStudents.includes(student.student_id)){
+                    totalStudents.push(student.student_id);
+                }
+            })
+          }
         });
 
-        data.totalPerMonth = totalPerMonth;
+        data.totalStudents = totalStudents;
+        data.totalPerMonth = totalPerMonth * 0.8;
 
         setTeacherData(data);
       })
@@ -113,7 +123,7 @@ export const TeacherDashboard = ({ name, id }: TypeUser) => {
         <Card
           colorA="#8A2387"
           colorB="#E94057"
-          title={`10`}
+          title={`${teacherData.totalStudents.length}`}
           description="students"
           url="students"
         />
