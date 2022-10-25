@@ -44,16 +44,16 @@ export default function AssignUnassignToSubject({
     if (entityType == "teacher") {
       axios
         .patch(`/api/subjects/${subject.id}`, {
+          period: subject.period,
           teacher_id: ["assign", "join"].includes(action) ? entityId : null,
         })
         .then((res) => {
           onClose();
           callback();
         })
-        .catch((err) => {
+        .catch(({response}) => {
           toast({
-            title: TOAST_ERROR_TITLE,
-            description: TOAST_ERROR_DESCRIPTION,
+            title: response.data || TOAST_ERROR_TITLE,
             status: "error",
             duration: 5000,
             isClosable: true,
@@ -68,6 +68,7 @@ export default function AssignUnassignToSubject({
           .post(`/api/courses`, {
             student_id: entityId,
             subject_id: subject.id,
+            
           })
           .then((res) => {
             toast({

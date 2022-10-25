@@ -24,10 +24,7 @@ const Subjects = ({ subjects, teachers }: PropData) => {
   const toast = useToast();
   const [subjectData, setSubjectData] = useState<Array<TypeSubject>>([]);
   const [reloadTable, setReloadTable] = useState<Date>(new Date());
-
-  const { data: session }: any = useSession();
-
-  const columns = [
+  const [columns, setColumns] = useState<any[]>([
     {
       name: "Actions",
       selector: (row: any) => row.actions,
@@ -36,9 +33,9 @@ const Subjects = ({ subjects, teachers }: PropData) => {
       name: "Topic",
       selector: (row: any) =>
         session?.user?.email.includes("teacher") ? (
-            <Link href={`/subjects/${slugify(row.topic, { lower: false })}`}>
-              <a>{row.topic}</a>
-            </Link>
+          <Link href={`/subjects/${slugify(row.topic, { lower: false })}`}>
+            <a>{row.topic}</a>
+          </Link>
         ) : (
           <Text>{row.topic}</Text>
         ),
@@ -57,34 +54,49 @@ const Subjects = ({ subjects, teachers }: PropData) => {
         ),
     },
     {
-      name: "Duration",
-      selector: (row: any) => `${row.duration_in_months} months`,
+      name: "Period",
+      selector: (row: any) => row.period.replace("_", " "),
     },
     {
       name: "Cost (per month)",
       selector: (row: any) => `$${row.monthly_cost}`,
     },
-  ];
+  ]);
+
+  const { data: session }: any = useSession();
+
 
   useEffect(() => {
     if (session?.user) {
       let studentSubjectsId: number[] = [];
 
       if (session.user.email.includes("student")) {
+
         const { id: student_id } = session.user;
 
-        const res = axios
+        axios
           .get(
             `/api/students?include=Subjects&where={"id":{"$eq":${student_id}}}`
           )
-          .then(({ data }) => {
+          .then(async({ data }) => {
             const { Subjects } = data[0];
 
             if (Subjects.length > 0) {
               studentSubjectsId = Subjects.map((item: any) => item.subject_id);
             }
 
-            fetchAndSetSubjects([], studentSubjectsId);
+            let showSubjectsGrade = [];
+            try {
+              const { data } = await axios.get(
+                `/api/courses?where={"student_id":${student_id}}`
+              );
+
+              showSubjectsGrade = data;
+            } catch (error) {
+              console.error(error);
+            }
+
+            fetchAndSetSubjects([], studentSubjectsId,showSubjectsGrade);
           })
           .catch((err) => console.error(err));
       } else {
@@ -95,7 +107,8 @@ const Subjects = ({ subjects, teachers }: PropData) => {
 
   function fetchAndSetSubjects(
     enableSubjectsToAssign: number[] = [],
-    disableSubjectsToAssign: number[] = []
+    disableSubjectsToAssign: number[] = [],
+    subjectsGrade: any[] = []
   ) {
     axios
       .get("/api/subjects?include=Teacher")
@@ -172,6 +185,7 @@ const Subjects = ({ subjects, teachers }: PropData) => {
                 )}
               </Stack>
             ),
+            grade: '10'
           }))
         );
       })
@@ -186,6 +200,11 @@ const Subjects = ({ subjects, teachers }: PropData) => {
         })
       );
   }
+
+  useEffect(() => {
+    console.log(subjectData)
+  }, [subjectData])
+  
 
   return (
     <MainPage

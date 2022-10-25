@@ -1,5 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { StudentDashboard } from "src/components/StudentDashboard";
 import { TeacherDashboard } from "src/components/TeacherDashboard";
 
 export default function Index() {
@@ -10,6 +11,9 @@ export default function Index() {
     }
     
     return (
-        session.user.email.includes('teacher') ? <TeacherDashboard name={session.user.name} id={session.user.id}/> : <Text>Home page</Text>
+        session.user.email.includes('teacher') ? <TeacherDashboard name={session.user.name} id={session.user.id}/> : 
+        session.user.email.includes('student') ?
+        <StudentDashboard name={session.user.name} id={session.user.id}/>
+        : <Text>Home page</Text> 
     )
 }

@@ -37,11 +37,17 @@ model Subject {
   topic       String    @unique @db.VarChar(150)
   description String    @db.VarChar(255)
   monthly_cost  Float
-  duration_in_months  Int
+  period  Period  @default(annually)
   teacher_id  Int? 
   Teacher     Teacher?   @relation(fields: [teacher_id], references: [id])
   Payment     Payment[]
   Students    Course[]
+}
+
+enum Period{
+  first_semester
+  second_semester
+  annually
 }
 
 model Course {

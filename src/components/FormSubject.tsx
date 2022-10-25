@@ -26,7 +26,7 @@ import {
   BUTTON_UPDATE,
   INPUT_COST_FORM_SUBJECT,
   INPUT_DESCRIPTION_FORM_SUBJECT,
-  INPUT_DURATION_FORM_SUBJECT,
+  INPUT_PERIOD_FORM_SUBJECT,
   INPUT_TEACHER_FORM_SUBJECT,
   INPUT_TOPIC_FORM_SUBJECT,
 } from "src/constants/strings";
@@ -70,8 +70,8 @@ export default function FormSubject({
     if (data.monthly_cost)
       data.monthly_cost = parseInt(data.monthly_cost as string);
 
-    if (data.duration_in_months)
-      data.duration_in_months = parseInt(data.duration_in_months as string);
+    if (data.period)
+      data.period = data.period.replaceAll(' ','_');
 
     if (edit) {
       axios
@@ -171,18 +171,35 @@ export default function FormSubject({
         </FormControl>
 
         <FormControl>
-          <FormLabel>{INPUT_DURATION_FORM_SUBJECT}</FormLabel>
-          <Input
-            type="number"
-            isInvalid={errors.duration_in_months ? true : false}
-            defaultValue={defaultData?.duration_in_months}
-            {...register("duration_in_months", {
+          <FormLabel>{INPUT_PERIOD_FORM_SUBJECT}</FormLabel>
+          {/* <Input
+            type="text"
+            isInvalid={errors.period ? true : false}
+            defaultValue={defaultData?.period}
+
+            {...register('period', {
               required: REQUIRED_FIELD_ERROR,
             })}
-          />
-          {errors.duration_in_months && (
+          /> */}
+
+          <Select
+            placeholder="Select option"
+            isInvalid={errors.period ? true : false}
+            defaultValue={defaultData?.period && defaultData.period.replaceAll(' ','_')}
+            {...register('period', {
+              required: REQUIRED_FIELD_ERROR,
+            })}
+          >
+            {['first semester','second semester','annually'].map((period: string) => (
+              <option value={period.replaceAll(' ','_')} key={period}>
+                {period.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+
+          {errors.period && (
             <FormHelperText color={"red"}>
-              {errors.duration_in_months.message}
+              {errors.period.message}
             </FormHelperText>
           )}
         </FormControl>

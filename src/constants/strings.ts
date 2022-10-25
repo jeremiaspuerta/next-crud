@@ -14,7 +14,7 @@ export const INPUT_TOPIC_FORM_SUBJECT = "topic";
 export const INPUT_DESCRIPTION_FORM_SUBJECT = "description";
 export const INPUT_COST_FORM_SUBJECT = "cost (per month)";
 export const INPUT_TEACHER_FORM_SUBJECT = "teacher";
-export const INPUT_DURATION_FORM_SUBJECT = "duration (in month)"
+export const INPUT_PERIOD_FORM_SUBJECT = "period"
 
 //Payment Module
 export const INPUT_STUDENT_FORM_PAYMENT = 'student';

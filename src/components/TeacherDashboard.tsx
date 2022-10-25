@@ -2,132 +2,72 @@ import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { TypeCourse } from "src/types/types";
+import { PROFIT_PERCENTAGE } from "src/configs/settings";
+import { TypeCardDashboard, TypeCourse } from "src/types/types";
+import { Dashboard } from "./Dashboard";
 
 type TypeUser = {
   name: string;
   id: string;
 };
 
-type TypeCard = {
-  colorA: string;
-  colorB: string;
-  title: string;
-  description?: string;
-  url?: string;
-  price?: string;
-};
-
-const Card = ({ title, description, url, colorA, colorB, price }: TypeCard) => {
-  return (
-    <Link href={`/${url}`}>
-      <Box
-        __css={{
-          background: `linear-gradient(to left, ${colorA}, ${colorB})`,
-        }}
-        width={"100%"}
-        color={"white"}
-        p={5}
-        rounded={"lg"}
-        mt={10}
-        transition={"0.3s"}
-        cursor={"pointer"}
-        _hover={{ boxShadow: "13px 16px 16px -5px #C2C2C2" }}
-      >
-        <Flex justifyContent={"space-between"}>
-          <Box display={"flex"} alignItems={"end"} gap={"1ch"}>
-            <Heading size={"4xl"}>{title}</Heading>
-            <Heading
-              fontWeight={"light"}
-              size={"md"}
-              mb={"7px"}
-              textTransform={"lowercase"}
-            >
-              {description || ""}
-            </Heading>
-          </Box>
-
-          {description == "subjects" && (
-            <Text fontWeight={"bold"} fontSize={"xl"}>
-              ${price}
-            </Text>
-          )}
-        </Flex>
-      </Box>
-    </Link>
-  );
-};
-
-type TypeTeacherDashboard = {
-  totalPerMonth: number;
-};
-
 export const TeacherDashboard = ({ name, id }: TypeUser) => {
   const [teacherData, setTeacherData] = useState<any>();
+  const [cards, setCards] = useState<TypeCardDashboard[]>([]);
 
   useEffect(() => {
     axios
       .get(`/api/subjects?include=Students&where={"teacher_id":${id}}`)
       .then(({ data }) => {
         let totalPerMonth: number = 0;
-        let totalStudents:number[] = [];
+        let totalStudents: number[] = [];
 
         data.forEach((item: any) => {
           totalPerMonth = totalPerMonth + parseInt(item.monthly_cost as string);
 
-          if(item.Students){
-            item.Students.forEach((student:TypeCourse)  => {
-                if(!totalStudents.includes(student.student_id)){
-                    totalStudents.push(student.student_id);
-                }
-            })
+          if (item.Students) {
+            item.Students.forEach((student: TypeCourse) => {
+              if (!totalStudents.includes(student.student_id)) {
+                totalStudents.push(student.student_id);
+              }
+            });
           }
         });
 
         data.totalStudents = totalStudents;
-        data.totalPerMonth = totalPerMonth * 0.8;
+        data.totalPerMonth = totalPerMonth * PROFIT_PERCENTAGE;
 
         setTeacherData(data);
       })
       .catch((err) => console.error(err));
   }, []);
 
+  useEffect(() => {
+    const cardA: TypeCardDashboard = {
+      colorA: "#3378FF",
+      colorB: "#9442FE",
+      title: teacherData?.length,
+      description: "subjects",
+      url: "subjects",
+      topDetail: `$${teacherData?.totalPerMonth}`,
+    };
+
+    const cardB: TypeCardDashboard = {
+      colorA: "#8A2387",
+      colorB: "#E94057",
+      title: teacherData?.totalStudents.length,
+      description: "students",
+      url: "students"
+    };
+
+    setCards([cardA,cardB]);
+
+  }, [teacherData]);
+
   if (!teacherData) {
     return <Text>Loading...</Text>;
   }
 
-  return (
-    <Container
-      maxW="150vh"
-      p={10}
-      mt={10}
-      bg={"blackAlpha.100"}
-      rounded={"lg"}
-      shadow={"lg"}
-    >
-      <Box textAlign={"start"} display={"flex"}>
-        <Heading fontWeight={"normal"}>Welcome, </Heading>
-        <Heading>{name}</Heading>
-        <Heading fontWeight={"light"}>!</Heading>
-      </Box>
+  return <Dashboard username={name} cards={cards}/>;
 
-      <Box textAlign={"start"} display={"flex"} gap={"5ch"}>
-        <Card
-          colorA="#3378FF"
-          colorB="#9442FE"
-          title={`${teacherData.length}`}
-          description="subjects"
-          url="subjects"
-          price={teacherData.totalPerMonth}
-        />
-        <Card
-          colorA="#8A2387"
-          colorB="#E94057"
-          title={`${teacherData.totalStudents.length}`}
-          description="students"
-          url="students"
-        />
-      </Box>
-    </Container>
-  );
 };

@@ -23,9 +23,15 @@ export type TypeSubject = {
   topic: string;
   description: string;
   monthly_cost: number | string;
-  duration_in_months: number | string;
+  period: string;
   teacher_id?: number | string;
 };
+
+export enum PeriodEnum {
+  first_semester,
+  second_semester,
+  annually
+}
 
 export type TypeTeacher = TypePerson & {
   
@@ -62,3 +68,13 @@ export type TypePayment = {
   Student?: TypeStudent;
   Subject?: TypeSubject;
 }
+
+export type TypeCardDashboard = {
+  colorA: string;
+  colorB: string;
+  title: string;
+  description?: string;
+  url?: string;
+  price?: string;
+  topDetail?: string;
+};
