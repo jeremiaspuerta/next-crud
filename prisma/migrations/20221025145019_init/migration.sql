@@ -32,7 +32,7 @@ CREATE TABLE `Subject` (
     `topic` VARCHAR(150) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
     `monthly_cost` DOUBLE NOT NULL,
-    `duration_in_months` INTEGER NOT NULL,
+    `period` ENUM('first_semester', 'second_semester', 'annually') NOT NULL DEFAULT 'annually',
     `teacher_id` INTEGER NULL,
 
     UNIQUE INDEX `Subject_topic_key`(`topic`),
@@ -44,7 +44,7 @@ CREATE TABLE `Course` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `student_id` INTEGER NOT NULL,
     `subject_id` INTEGER NOT NULL,
-    `grade` DOUBLE NOT NULL,
+    `grade` DOUBLE NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -69,7 +69,7 @@ CREATE TABLE `Payment` (
     `student_id` INTEGER NOT NULL,
     `subject_id` INTEGER NOT NULL,
     `price` DOUBLE NOT NULL,
-    `expiration_day` INTEGER NOT NULL,
+    `expiration_day` INTEGER NULL,
     `paid_on` DATETIME(3) NULL,
     `created_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
 
