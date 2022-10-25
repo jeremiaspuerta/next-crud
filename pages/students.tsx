@@ -72,26 +72,32 @@ const Students = () => {
           )}
         </Stack>
       ),
+      sortable: true
     },
     {
       name: "Name",
       selector: (row: any) => row.name,
+      sortable: true
     },
     {
       name: "Lastname",
       selector: (row: any) => row.lastname,
+      sortable: true
     },
     {
       name: "Document number",
       selector: (row: any) => row.document_number,
+      sortable: true
     },
     {
       name: "Email",
       selector: (row: any) => row.email,
+      sortable: true
     },
     {
       name: "Created on",
       selector: (row: any) => dayjs(row.created_at).format("DD/MM/YYYY"),
+      sortable: true
     },
   ];
 

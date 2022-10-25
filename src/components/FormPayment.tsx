@@ -31,6 +31,7 @@ import {
 import { useEffect, useState } from "react";
 import { TypeStudent, TypeSubject, TypeTeacher } from "src/types/types";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
 
 type TypeFormPayment = {
   onClose: () => void;
@@ -52,7 +53,6 @@ export default function FormPayment({
   defaultData,
   edit = false,
 }: TypeFormPayment) {
-  const [teachers, setTeachers] = useState<Array<TypeTeacher>>([]);
   const {
     register,
     handleSubmit,
@@ -64,13 +64,15 @@ export default function FormPayment({
   const [submit, setSubmit] = useState(false);
   const [subjectsData, setSubjectsData] = useState<Array<any>>([]);
   const [studentsData, setStudentsData] = useState<Array<any>>([]);
-  const [subjectFieldDisabled, setSubjectFieldDisabled] =
-    useState<boolean>(true);
-  const [priceFieldDisabled, setPriceFieldDisabled] = useState<boolean>(true);
+  const { data: session }: any = useSession();
 
   const onSubmit: SubmitHandler<TypeInputsForm> = async (data) => {
     setSubmit(!submit);
 
+    if(session.user.email.includes("student")){
+      data.student_id = session.user.id;
+    }
+    
     if (data.student_id) data.student_id = parseInt(data.student_id as string);
 
     if (data.subject_id) data.subject_id = parseInt(data.subject_id as string);
@@ -143,20 +145,50 @@ export default function FormPayment({
           position: "top",
         })
       );
+
+    if(session){
+      fetchSubjects(session.user.id)
+    }
+
   }, []);
 
-  function handleChangeStudent(student_id: string){
-    setValue('subject_id','');
+  function fetchSubjects(student_id: string){
+    axios(
+      `/api/courses?where={ "student_id":{"$eq": ${student_id}} }&include=Subject`
+    )
+      .then(({ data }) => {
+        const subjects = data.map(({ Subject }: any) => ({
+          id: Subject.id,
+          value: Subject.topic,
+        }));
+
+        setSubjectsData(subjects);
+      })
+      .catch((error) =>
+        toast({
+          title: TOAST_ERROR_TITLE,
+          description: TOAST_ERROR_DESCRIPTION,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        })
+      );
+  }
+
+  function handleChangeStudent(student_id: string) {
+    setValue("subject_id", "");
 
     if (student_id) {
+      fetchSubjects(student_id);
+    }
+  }
 
-      axios(
-        `/api/courses?where={ "student_id":{"$eq": ${student_id}} }&include=Subject`
-      )
+  function handleChangeSubject(subject_id: string) {
+    if (subject_id) {
+      axios(`/api/subjects/${subject_id}`)
         .then(({ data }) => {
-          const subjects = data.map(({Subject}: any) => ({id: Subject.id,value: Subject.topic}));
-
-          setSubjectsData(subjects);
+          setValue("price", data.monthly_cost);
         })
         .catch((error) =>
           toast({
@@ -171,42 +203,26 @@ export default function FormPayment({
     }
   }
 
-  function handleChangeSubject(subject_id: string){
-    if(subject_id){
-      axios(
-        `/api/subjects/${subject_id}`
-      )
-        .then(({ data }) => {
-          setValue('price',data.monthly_cost);
-
-        })
-        .catch((error) =>
-          toast({
-            title: TOAST_ERROR_TITLE,
-            description: TOAST_ERROR_DESCRIPTION,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "top",
-          })
-        );
-    }
+  if(!session){
+    return <Text>Loading...</Text>
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex gap={7} flexDir={"column"}>
-        {studentsData.length > 0 ? (
+        {!session.user.email.includes("student") ?  studentsData.length > 0  ? (
           <FormControl>
             <FormLabel>{INPUT_STUDENT_FORM_PAYMENT}</FormLabel>
             <Select
               placeholder="Select option"
               isInvalid={errors.student_id ? true : false}
-              defaultValue={defaultData?.student_id}
+              defaultValue={session.user.email.includes("student") ? session.user.id : defaultData?.student_id}
               {...register("student_id", {
                 required: REQUIRED_FIELD_ERROR,
               })}
-              onChange={(event) => handleChangeStudent(event.currentTarget.value)}
+              onChange={(event) =>
+                handleChangeStudent(event.currentTarget.value)
+              }
             >
               {studentsData.map((student: TypeStudent) => (
                 <option value={student.id} key={`${student.id}`}>
@@ -225,39 +241,32 @@ export default function FormPayment({
             <AlertIcon />
             <Text>{INPUT_SELECT_DATA_EMPTY("student")}</Text>
           </Alert>
-        )}
+        ) : <></>}
 
         {/* {subjectsData.length > 0 ? ( */}
-          <FormControl>
-            <FormLabel>{INPUT_SUBJECT_FORM_PAYMENT}</FormLabel>
-            <Select
-              placeholder="Select option"
-              isInvalid={errors.subject_id ? true : false}
-              defaultValue={defaultData?.subject_id}
-              {...register("subject_id", {
-                required: REQUIRED_FIELD_ERROR,
-              })}
-              onChange={(event) => handleChangeSubject(event.currentTarget.value)}
-            >
-              {subjectsData.map((subject: any) => (
-                <option value={subject.id} key={`${subject.id}`}>
-                  {subject.value.toUpperCase()}
-                </option>
-              ))}
-            </Select>
-            {errors.subject_id && (
-              <FormHelperText color={"red"}>
-                {errors.subject_id.message}
-              </FormHelperText>
-            )}
-          </FormControl>
-         {/* )
-          : (
-           <Alert status="info">
-             <AlertIcon />
-             <Text>{INPUT_SELECT_DATA_EMPTY("subject")}</Text>
-           </Alert>
-         )} */}
+        <FormControl>
+          <FormLabel>{INPUT_SUBJECT_FORM_PAYMENT}</FormLabel>
+          <Select
+            placeholder="Select option"
+            isInvalid={errors.subject_id ? true : false}
+            defaultValue={defaultData?.subject_id}
+            {...register("subject_id", {
+              required: REQUIRED_FIELD_ERROR,
+            })}
+            onChange={(event) => handleChangeSubject(event.currentTarget.value)}
+          >
+            {subjectsData.map((subject: any) => (
+              <option value={subject.id} key={`${subject.id}`}>
+                {subject.value.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+          {errors.subject_id && (
+            <FormHelperText color={"red"}>
+              {errors.subject_id.message}
+            </FormHelperText>
+          )}
+        </FormControl>
 
         <FormControl>
           <FormLabel>{INPUT_PRICE_FORM_PAYMENT}</FormLabel>

@@ -11,26 +11,32 @@ const columns = [
   {
     name: "Actions",
     selector: (row: any) => row.actions,
+    sortable: true
   },
   {
     name: "#",
     selector: (row: any) => row.id,
+    sortable: true
   },
   {
     name: "Student",
     selector: (row: any) => row.Student.name,
+    sortable: true
   },
   {
     name: "Subject",
     selector: (row: any) => row.Subject.topic,
+    sortable: true
   },
   {
     name: "Price",
     selector: (row: any) => row.price,
+    sortable: true
   },
   {
     name: "Registration on",
     selector: (row: any) => dayjs(row.created_at).format("DD/MM/YYYY") ,
+    sortable: true
   },
 ];
 

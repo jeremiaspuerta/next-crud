@@ -61,7 +61,7 @@ export const Dashboard = ({ username,cards }: TypeDashboard) => {
       shadow={"lg"}
     >
       <Box textAlign={"start"} display={"flex"}>
-        <Heading fontWeight={"normal"}>Welcome, </Heading>
+        <Heading fontWeight={"normal"}>Welcome,&nbsp;</Heading>
         <Heading>{username}</Heading>
         <Heading fontWeight={"light"}>!</Heading>
       </Box>

@@ -81,10 +81,9 @@ export default function AssignUnassignToSubject({
             onClose();
             callback();
           })
-          .catch((err) => {
+          .catch(({response}) => {
             toast({
-              title: TOAST_ERROR_TITLE,
-              description: TOAST_ERROR_DESCRIPTION,
+              title: response.data || TOAST_ERROR_TITLE,
               status: "error",
               duration: 5000,
               isClosable: true,

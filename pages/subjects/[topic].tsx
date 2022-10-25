@@ -26,18 +26,22 @@ const Subject = () => {
     {
       name: "Document number",
       selector: (row: any) => row.Student.document_number,
+      sortable: true
     },
     {
       name: "Name",
       selector: (row: any) => row.Student.name,
+      sortable: true
     },
     {
       name: "Lastname",
       selector: (row: any) => row.Student.lastname,
+      sortable: true
     },
     {
       name: "Grade",
       selector: (row: any) => <ModalChangeGrade currentGrade={row.grade} student={row.Student} course_id={row.id} callback={() => setReloadTable(new Date())}/>,
+      sortable: true
     },
   ];
 

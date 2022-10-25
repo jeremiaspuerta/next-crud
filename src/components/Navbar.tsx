@@ -84,7 +84,7 @@ export default function NavBar() {
       name: "Payments",
       show: session?.user?.email
         ?
-          session.user.email.includes("admin")
+          session.user.email.includes("admin") || session.user.email.includes("student") 
         : false,
         link: 'payments'
     },

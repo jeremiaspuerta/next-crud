@@ -43,7 +43,7 @@ function ModalCreate({
 
   return (
     <>
-      {session?.user?.email && session.user.email.includes("admin") ? (
+      {session?.user?.email && (session.user.email.includes("admin") || session.user.email.includes("student"))  ? (
         <Button
           onClick={onOpen}
           colorScheme={"green"}

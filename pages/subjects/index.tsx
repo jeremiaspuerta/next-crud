@@ -39,10 +39,12 @@ const Subjects = ({ subjects, teachers }: PropData) => {
         ) : (
           <Text>{row.topic}</Text>
         ),
+        sortable: true
     },
     {
       name: "Description",
       selector: (row: any) => row.description,
+      sortable: true
     },
     {
       name: "Teacher",
@@ -52,14 +54,17 @@ const Subjects = ({ subjects, teachers }: PropData) => {
         ) : (
           <Tag>Not Selected</Tag>
         ),
+        sortable: true
     },
     {
       name: "Period",
       selector: (row: any) => row.period.replace("_", " "),
+      sortable: true
     },
     {
       name: "Cost (per month)",
       selector: (row: any) => `$${row.monthly_cost}`,
+      sortable: true
     },
   ]);
 
