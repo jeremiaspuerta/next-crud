@@ -24,17 +24,14 @@ const handler = async (req: any, res: any) => {
 
       if(route){
 
-        console.log(route,body)
-
         if(route.resourceName == 'subjects' && route.routeType == 'UPDATE'){
           await SubjectRules[route.routeType](body);          
         }else if(route.resourceName == 'courses' && route.routeType == 'CREATE'){
           await CoursesRules[route.routeType](body);
         }
-        // else if(route.resourceName == 'payments' && route.routeType == 'CREATE'){
-
-        //   await PaymentsRules[route.routeType](body);
-        // }
+        else if(route.resourceName == 'payments' && route.routeType == 'CREATE'){
+          await PaymentsRules[route.routeType](body);
+        }
       }
 
     }
